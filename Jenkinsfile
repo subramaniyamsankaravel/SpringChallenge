@@ -1,12 +1,10 @@
 pipeline {
-     agent any
-     triggers{
-         pollSCM('* * * * *')
-     }
-    tools{
-        maven 'maven'
-        jdk 'Jdk'
+     agent {
+    docker {
+      image 'maven:3.6.3-jdk-11'
+      args '-v /root/.m2:/root/.m2'
     }
+  }
     stages{
           stage('Fetch') {
             steps {
