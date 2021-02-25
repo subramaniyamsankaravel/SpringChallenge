@@ -17,7 +17,7 @@ pipeline {
         
         stage('Clean'){
             steps{
-                dir("/var/jenkins_home/workspace/CodingChallenge-2"){
+                dir("/var/jenkins_home/workspace/pipeline-aws"){
                     sh 'echo Clean'
                     sh 'mvn  clean'
                 }
@@ -25,7 +25,7 @@ pipeline {
         }
         stage('Validate'){
                 steps{
-                     dir("/var/jenkins_home/workspace/CodingChallenge-2"){
+                     dir("/var/jenkins_home/workspace/pipeline-aws"){
                 
                         sh 'mvn  validate'
                      }
@@ -34,7 +34,7 @@ pipeline {
          }
         stage('Compile'){
                 steps{
-                     dir("/var/jenkins_home/workspace/CodingChallenge-2"){
+                     dir("/var/jenkins_home/workspace/pipeline-aws"){
                  
                         sh 'echo Compile'
                          sh 'mvn  compile'
@@ -46,7 +46,7 @@ pipeline {
         
              stage('Test'){
                  steps {
-                      dir("/var/jenkins_home/workspace/CodingChallenge-2"){
+                      dir("/var/jenkins_home/workspace/pipeline-aws"){
                          sh 'echo Test'
                          sh 'mvn test'
                       }
@@ -60,7 +60,7 @@ pipeline {
 
             stage('Sonar Analysis'){
             steps{
-                 dir("/var/jenkins_home/workspace/CodingChallenge-2"){
+                 dir("/var/jenkins_home/workspace/pipeline-aws"){
                     withSonarQubeEnv('Sonar'){
                         withMaven(maven:'maven'){
                             sh 'mvn sonar:sonar'
@@ -87,7 +87,7 @@ pipeline {
         }
             stage('Build'){
             steps {
-                 dir("/var/jenkins_home/workspace/CodingChallenge-2"){
+                 dir("/var/jenkins_home/workspace/pipeline-aws"){
                 
                         sh 'echo Build'
                         sh 'mvn  package -Dbuild.number=-${BUILD_NUMBER}'
@@ -105,7 +105,7 @@ pipeline {
              
             stage('collect artifact'){
                 steps{
-                    archiveArtifacts artifacts: 'CodingChallenge-2/target/*.jar', followSymlinks: false
+                    archiveArtifacts artifacts: 'pipeline-aws/target/*.jar', followSymlinks: false
                  }
             }      
         /* stage('deploy to artifactory')
@@ -156,7 +156,7 @@ pipeline {
                     spec: '''{
                     "files": [
                          {
-                             "pattern": "CodingChallenge-2/target/*.jar",
+                             "pattern": "pipeline-aws/target/*.jar",
                              "target": "art-doc-dev-loc"
                         }
                      ]
@@ -173,7 +173,7 @@ rtDownload (
                     "files": [
                          {
                              "pattern": "art-doc-dev-loc",
-                             "target": "CodingChallenge-2/"
+                             "target": "pipeline-aws/"
                         }
                      ]
                 }''',
@@ -184,7 +184,7 @@ rtDownload (
 )
 
        sshagent(['4caf8f9d-4507-4358-a814-4a2866505100']){
-                    sh 'scp -r /var/jenkins_home/workspace/CodingChallenge-2/target/*.jar ubuntu@18.216.159.12:/home/ubuntu/artifacts'
+                    sh 'scp -r /var/jenkins_home/workspace/pipeline-aws/target/*.jar ubuntu@18.216.159.12:/home/ubuntu/artifacts'
         }
         }
         failure{
